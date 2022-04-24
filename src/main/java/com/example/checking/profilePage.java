@@ -103,7 +103,7 @@ public class profilePage {
 
         orderTable.getColumns().addAll(orderID, date, price);
 
-        //TODO: Make a function that returns an Arraylist of orders.
+        //TODO: Make a function that returns an Arraylist of orders for this customer.
         orderTable.getItems().addAll(new order(2,"3",4));
 
 

@@ -1,7 +1,6 @@
 package com.example.checking;
 
 import javafx.scene.Scene;
-import javafx.scene.control.Tab;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -31,20 +30,20 @@ public class orderPage {
     public static TableView getProductsTable(int orderId){
         TableView productsTable = new TableView();
 
-        TableColumn<order, String> prodName = new TableColumn();
+        TableColumn<orderedProducts, String> prodName = new TableColumn();
         prodName.setText("Product Name");
         prodName.setPrefWidth(200);
         prodName.setResizable(false);
         prodName.setCellValueFactory(new PropertyValueFactory<>("productName"));
 
-        TableColumn<order, String> quantity = new TableColumn();
+        TableColumn<orderedProducts, String> quantity = new TableColumn();
         quantity.setText("Quantity");
         quantity.setPrefWidth(200);
         quantity.setResizable(false);
         quantity.setCellValueFactory(new PropertyValueFactory<>("quantity"));
 
 
-        TableColumn<order, String> cost = new TableColumn();
+        TableColumn<orderedProducts, String> cost = new TableColumn();
         cost.setText("Cost");
         cost.setPrefWidth(200);
         cost.setResizable(false);
@@ -53,8 +52,8 @@ public class orderPage {
 
         productsTable.getColumns().addAll(prodName, quantity, cost);
 
-        //TODO: Make a function that returns an Arraylist of orders.
-        productsTable.getItems().addAll(new products("Halwa",2,50));
+        //TODO: Make a function that returns an Arraylist of product for this order ID.
+        productsTable.getItems().addAll(new orderedProducts("Halwa",2,50));
 
 
         return productsTable;

@@ -242,7 +242,7 @@ public class HelloApplication extends Application {
             try{
                 Class.forName("com.mysql.cj.jdbc.Driver");
                 Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/retailstore", "root", "ComeCode1608");
-//                query = "insert into products values (1, \'soap\', 3, 'sanitary', 10.0, 'good soap')";
+//                query = "insert into orderedProducts values (1, \'soap\', 3, 'sanitary', 10.0, 'good soap')";
                 PreparedStatement pst = conn.prepareStatement(query);
                 pst.executeUpdate();
                 return true;

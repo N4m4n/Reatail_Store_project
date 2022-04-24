@@ -84,10 +84,38 @@ public class HomePage {
         profileImg.setOnMouseClicked(e->{
             showProfile(stage);
         });
+
+        Eatables.setOnMouseClicked(e->{
+            showProdsInCategory(stage, 1);
+        });
+
+        Apparels.setOnMouseClicked(e->{
+            showProdsInCategory(stage, 2);
+        });
+
+        Furniture.setOnMouseClicked(e->{
+            showProdsInCategory(stage, 3);
+        });
+
+        Electronics.setOnMouseClicked(e->{
+            showProdsInCategory(stage, 4);
+        });
     }
 
     public static void showProfile(Stage stage){
         profilePage.show(stage);
+    }
+
+    public static void showProdsInCategory(Stage stage, int category){
+        if(category == 1){
+            allProductsPage.show(stage, category);
+        }else if(category == 2){
+            allProductsPage.show(stage, category);
+        }else if(category == 3){
+            allProductsPage.show(stage, category);
+        }else if(category == 4){
+            allProductsPage.show(stage, category);
+        }
     }
 
 }
