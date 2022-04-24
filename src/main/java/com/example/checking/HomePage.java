@@ -87,7 +87,7 @@ public class HomePage {
     }
 
     public static void showProfile(Stage stage){
-        profile.show(stage);
+        profilePage.show(stage);
     }
 
 }

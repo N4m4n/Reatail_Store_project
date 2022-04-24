@@ -8,7 +8,7 @@ import javafx.stage.Stage;
 
 import java.util.ArrayList;
 
-public class profile {
+public class profilePage {
     public static void show(Stage stage){
 
 
