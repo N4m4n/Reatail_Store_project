@@ -42,6 +42,15 @@ public class allProductsPage {
         addItems.setLayoutX(450);
         addItems.setLayoutY(450);
 
+        Button checkout = new Button();
+        checkout.setText("Checkout");
+        checkout.setLayoutX(450);
+        checkout.setLayoutY(550);
+
+        checkout.setOnAction(e->{
+            profilePage.show(stage);
+        });
+
         addItems.setOnAction(e->{
             availableProducts curr = (availableProducts) categoryWiseProducts.getSelectionModel().getSelectedItem();
             int quantityToAdd = 0;
@@ -66,7 +75,7 @@ public class allProductsPage {
             System.out.println(curr.getDescription()+" "+quantityToAdd);
         });
 
-        main.getChildren().addAll(categoryWiseProducts, Add, quant, items, addItems, back);
+        main.getChildren().addAll(categoryWiseProducts, Add, quant, items, addItems, back, checkout);
         Scene productsScene = new Scene(main, 800, 600);
         stage.setScene(productsScene);
     }

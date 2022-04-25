@@ -1,5 +1,6 @@
 package com.example.checking;
 
+import javafx.geometry.Orientation;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -74,7 +75,14 @@ public class profilePage {
             return row ;
         });
 
-        main.getChildren().addAll(addresses, addr, cartsList, Cart, ordersLabel, ordersTable, back);
+        Button orderButton = new Button("Order Now");
+        orderButton.setLayoutY(270);
+        orderButton.setLayoutX(5);
+        orderButton.setOnAction(e->{
+            orderConfirmation.show(stage);
+        });
+
+        main.getChildren().addAll(orderButton, addresses, addr, cartsList, Cart, ordersLabel, ordersTable, back);
         Scene profileScene = new Scene(main, 800, 600);
         stage.setScene(profileScene);
 
