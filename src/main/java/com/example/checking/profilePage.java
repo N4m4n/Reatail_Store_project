@@ -18,6 +18,13 @@ public class profilePage {
         addr.setLayoutY(20);
         addr.setLayoutX(100);
 
+        Button back = new Button("Back");
+        back.setLayoutY(20);
+        back.setLayoutX(20);
+        back.setOnAction(e->{
+            HomePage.show(stage);
+        });
+
         ListView<String> addresses = new ListView<String>();
         ArrayList<String> allAddresses = new ArrayList<>();
         allAddresses.add("lol");
@@ -67,9 +74,7 @@ public class profilePage {
             return row ;
         });
 
-
-
-        main.getChildren().addAll(addresses, addr, cartsList, Cart, ordersLabel, ordersTable);
+        main.getChildren().addAll(addresses, addr, cartsList, Cart, ordersLabel, ordersTable, back);
         Scene profileScene = new Scene(main, 800, 600);
         stage.setScene(profileScene);
 

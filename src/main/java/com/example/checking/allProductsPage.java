@@ -21,6 +21,13 @@ public class allProductsPage {
         Add.setLayoutX(200);
         Add.setLayoutY(450);
 
+        Button back = new Button("Back");
+        back.setLayoutX(20);
+        back.setLayoutY(20);
+        back.setOnAction(e->{
+            HomePage.show(stage);
+        });
+
         TextField quant = new TextField();
         quant.setLayoutY(450);
         quant.setLayoutX(240);
@@ -56,14 +63,10 @@ public class allProductsPage {
 
             }
 
-
             System.out.println(curr.getDescription()+" "+quantityToAdd);
         });
 
-
-
-
-        main.getChildren().addAll(categoryWiseProducts, Add, quant, items, addItems);
+        main.getChildren().addAll(categoryWiseProducts, Add, quant, items, addItems, back);
         Scene productsScene = new Scene(main, 800, 600);
         stage.setScene(productsScene);
     }

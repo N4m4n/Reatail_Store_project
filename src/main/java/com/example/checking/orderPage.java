@@ -1,6 +1,7 @@
 package com.example.checking;
 
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -18,8 +19,14 @@ public class orderPage {
         productList.setPrefHeight(300);
         productList.setPrefWidth(600);
 
+        Button back = new Button("Back");
+        back.setLayoutX(20);
+        back.setLayoutY(20);
+        back.setOnAction(e->{
+            profilePage.show(stage);
+        });
 
-        main.getChildren().addAll(productList);
+        main.getChildren().addAll(productList, back);
         stage.setScene(orderScene);
 
 

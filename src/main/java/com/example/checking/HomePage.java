@@ -1,5 +1,6 @@
 package com.example.checking;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -7,9 +8,22 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
+import java.io.IOException;
+
 public class HomePage {
     public static void show(Stage stage){
         Pane main = new Pane();
+        Button back = new Button("Back");
+        back.setLayoutY(20);
+        back.setLayoutX(20);
+        back.setOnAction(e-> {
+            HelloApplication a = new HelloApplication();
+            try {
+                a.start(stage);
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        });
 
         TextField searchBar = new TextField();
         searchBar.setPrefWidth(500);
@@ -77,7 +91,7 @@ public class HomePage {
         Label furni = new Label("Furniture");
         furni.setLayoutX(440);
         furni.setLayoutY(555);
-        main.getChildren().addAll(furni, elect, appr, eat, searchBar, searchIcon, profileImg);
+        main.getChildren().addAll(back, furni, elect, appr, eat, searchBar, searchIcon, profileImg);
         Scene homeScene = new Scene(main, 800, 600);
         stage.setScene(homeScene);
 
