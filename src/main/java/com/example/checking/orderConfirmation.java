@@ -10,6 +10,13 @@ public class orderConfirmation {
         Pane main = new Pane();
         ComboBox<String> addresses = new ComboBox();
 
+        Button back = new Button("Back");
+        back.setLayoutX(20);
+        back.setLayoutY(20);
+        back.setOnAction(e->{
+            profilePage.show(stage);
+        });
+
         addresses.getItems().addAll("Address1", "Address 2");
         addresses.setLayoutX(100);
         addresses.setLayoutY(100);
@@ -53,15 +60,15 @@ public class orderConfirmation {
             dialog.setHeight(200);
             dialog.setWidth(400);
             ButtonType type = new ButtonType("Ok", ButtonBar.ButtonData.OK_DONE);
-
             dialog.setContentText("Congratulations, your order has been placed!");
             //Adding buttons to the dialog pane
             dialog.getDialogPane().getButtonTypes().add(type);
             dialog.showAndWait();
+            HomePage.show(stage);
 
         });
 
-        main.getChildren().addAll(addresses, cardDetails, placeOrder, couponText, couponField, applyCoupon);
+        main.getChildren().addAll(addresses, cardDetails, placeOrder, couponText, couponField, applyCoupon, back);
 
         Scene orderConfirmScene = new Scene(main, 800, 600);
         stage.setScene(orderConfirmScene);
