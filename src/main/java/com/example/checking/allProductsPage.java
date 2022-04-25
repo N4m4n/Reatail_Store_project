@@ -1,11 +1,12 @@
 package com.example.checking;
 
 import javafx.scene.Scene;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+
+import java.util.Queue;
 
 public class allProductsPage {
 
@@ -16,10 +17,53 @@ public class allProductsPage {
         categoryWiseProducts.setLayoutX(100);
         categoryWiseProducts.setPrefHeight(300);
         categoryWiseProducts.setPrefWidth(600);
+        Label Add = new Label("Add");
+        Add.setLayoutX(200);
+        Add.setLayoutY(450);
+
+        TextField quant = new TextField();
+        quant.setLayoutY(450);
+        quant.setLayoutX(240);
+        quant.setPrefWidth(60);
+
+        Label items = new Label("selected items to the cart.");
+        items.setLayoutY(450);
+        items.setLayoutX(310);
+
+        Button addItems = new Button();
+        addItems.setText("Add to cart");
+        addItems.setLayoutX(450);
+        addItems.setLayoutY(450);
+
+        addItems.setOnAction(e->{
+            availableProducts curr = (availableProducts) categoryWiseProducts.getSelectionModel().getSelectedItem();
+            int quantityToAdd = 0;
+            try{
+                quantityToAdd = Integer.valueOf(quant.getText());
+
+            }catch(Exception e2){
+                Dialog<String> dialog = new Dialog<String>();
+
+                dialog.setTitle("Invalid");
+                dialog.setHeight(200);
+                dialog.setWidth(400);
+                ButtonType type = new ButtonType("Ok", ButtonBar.ButtonData.OK_DONE);
+
+                dialog.setContentText("Please enter a valid quantity");
+                //Adding buttons to the dialog pane
+                dialog.getDialogPane().getButtonTypes().add(type);
+                dialog.showAndWait();
+
+            }
+
+
+            System.out.println(curr.getDescription()+" "+quantityToAdd);
+        });
 
 
 
-        main.getChildren().addAll(categoryWiseProducts);
+
+        main.getChildren().addAll(categoryWiseProducts, Add, quant, items, addItems);
         Scene productsScene = new Scene(main, 800, 600);
         stage.setScene(productsScene);
     }

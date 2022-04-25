@@ -119,11 +119,9 @@ public class HelloApplication extends Application {
         try{
 
             Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/testingdb", "root", "");
+            Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/retailstore", "root", "ComeCode1608");
             System.out.println("Works");
-            PreparedStatement pst = conn.prepareStatement("insert into hello(name) values(?)");
-            pst.setString(1,"22");
-            pst.executeUpdate();
+
             return conn;
         }catch(Exception e2){
             System.out.println("Something is wrong");
@@ -183,7 +181,7 @@ public class HelloApplication extends Application {
         password.setLayoutX(200);
         registrationForm.getChildren().addAll(password);
 
-        TextField passwordText = new TextField();
+        PasswordField passwordText = new PasswordField();
         passwordText.setLayoutX(400);
         passwordText.setLayoutY(260);
         registrationForm.getChildren().add(passwordText);
