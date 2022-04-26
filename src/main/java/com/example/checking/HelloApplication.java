@@ -76,7 +76,10 @@ public class HelloApplication extends Application {
             ResultSet rs = retrieveData(query, 2);
 
             try {
+
                 if(rs.next()){
+                    customerID = rs.getInt("customerID");
+                    System.out.println("ID: "+customerID);
                     System.out.println("Logged in");
                     HomePage.show(stage);
 
@@ -244,6 +247,7 @@ public class HelloApplication extends Application {
 //                query = "insert into orderedProducts values (1, \'soap\', 3, 'sanitary', 10.0, 'good soap')";
                 PreparedStatement pst = conn.prepareStatement(query);
                 pst.executeUpdate();
+                System.out.println(query);
                 return true;
 
             }catch(Exception e2){

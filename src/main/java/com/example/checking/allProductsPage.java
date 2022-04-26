@@ -6,11 +6,15 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Queue;
+import java.util.concurrent.atomic.AtomicReferenceArray;
 
 public class allProductsPage {
 
-    public static void show(Stage stage, int category){
+    public static void show(Stage stage, int category) throws SQLException {
         Pane main = new Pane();
         TableView categoryWiseProducts = getProductsTableCategory(category);
         categoryWiseProducts.setLayoutY(100);
@@ -48,7 +52,11 @@ public class allProductsPage {
         checkout.setLayoutY(550);
 
         checkout.setOnAction(e->{
-            profilePage.show(stage);
+            try {
+                profilePage.show(stage);
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
         });
 
         addItems.setOnAction(e->{
@@ -71,6 +79,12 @@ public class allProductsPage {
                 dialog.showAndWait();
 
             }
+            if(curr.getQuantityAvailable() < quantityToAdd){
+                HelloApplication.showError("Insufficient", "You order more than we have");
+            }else{
+                String query = "insert into cart values ("+HelloApplication.customerID+", "+curr.getProductID()+", "+quantityToAdd+")";
+                HelloApplication.sendData(query, 1);
+            }
 
             System.out.println(curr.getDescription()+" "+quantityToAdd);
         });
@@ -80,7 +94,7 @@ public class allProductsPage {
         stage.setScene(productsScene);
     }
 
-    public static TableView getProductsTableCategory(int category){
+    public static TableView getProductsTableCategory(int category) throws SQLException {
         TableView productsTable = new TableView();
 
         TableColumn<availableProducts, String> productID = new TableColumn();
@@ -117,10 +131,37 @@ public class allProductsPage {
 
         productsTable.getColumns().addAll(productID, prodName, description, price, quantityAvailable);
 
-        //TODO: Make a function that returns an Arraylist of product for this category.
-        productsTable.getItems().addAll(new availableProducts(1, "Halwa", 35.5F, "Very nice", 30));
+
+
+
+        switch(category){
+            case 1:
+                productsTable.getItems().addAll(getListOfProducts("Eatables"));
+                break;
+            case 2:
+                productsTable.getItems().addAll(getListOfProducts("Apparels"));
+                break;
+            case 3:
+                productsTable.getItems().addAll(getListOfProducts("Furniture"));
+                break;
+            case 4:
+                productsTable.getItems().addAll(getListOfProducts("Electronics"));
+                break;
+        }
 
 
         return productsTable;
+    }
+
+    public static ArrayList<availableProducts> getListOfProducts(String category) throws SQLException {
+        String query = "select * from products where category = \'"+category+"\'";
+        ResultSet rs = HelloApplication.retrieveData(query, 2);
+        ArrayList<availableProducts> toRet = new ArrayList<>();
+        while (rs.next()) {
+            availableProducts toAdd = new availableProducts(rs.getInt("productID"), rs.getString("productName"), rs.getFloat("price"), rs.getString("productDetails"), rs.getInt("quantityAvailable"));
+            toRet.add(toAdd);
+        }
+        return toRet;
+
     }
 }

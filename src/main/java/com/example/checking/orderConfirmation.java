@@ -5,6 +5,8 @@ import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
+import java.sql.SQLException;
+
 public class orderConfirmation {
     public static void show(Stage stage){
         Pane main = new Pane();
@@ -14,7 +16,11 @@ public class orderConfirmation {
         back.setLayoutX(20);
         back.setLayoutY(20);
         back.setOnAction(e->{
-            profilePage.show(stage);
+            try {
+                profilePage.show(stage);
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
         });
 
         addresses.getItems().addAll("Address1", "Address 2");

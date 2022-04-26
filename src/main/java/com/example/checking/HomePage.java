@@ -9,6 +9,8 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class HomePage {
     public static void show(Stage stage){
@@ -36,6 +38,21 @@ public class HomePage {
         searchIcon.setLayoutX(525);
         searchIcon.setFitHeight(20);
         searchIcon.setFitWidth(20);
+
+        searchIcon.setOnMouseClicked(e->{
+            String input = searchBar.getText().strip();
+            String query = "select * from products where products.productName = \'"+input+"\'";
+            ResultSet rs = HelloApplication.retrieveData(query, 2);
+            try{
+
+                searchResult.show(stage, rs);
+
+            }catch(Exception ex){
+                HelloApplication.showError("Error", "Some Error Occured"+ex.getMessage());
+            }
+
+
+        });
 
         Image profile = new Image("file:images/profile.jpg");
         ImageView profileImg = new ImageView(profile);
@@ -96,31 +113,51 @@ public class HomePage {
         stage.setScene(homeScene);
 
         profileImg.setOnMouseClicked(e->{
-            showProfile(stage);
+            try {
+                showProfile(stage);
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
         });
 
         Eatables.setOnMouseClicked(e->{
-            showProdsInCategory(stage, 1);
+            try {
+                showProdsInCategory(stage, 1);
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
         });
 
         Apparels.setOnMouseClicked(e->{
-            showProdsInCategory(stage, 2);
+            try {
+                showProdsInCategory(stage, 2);
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
         });
 
         Furniture.setOnMouseClicked(e->{
-            showProdsInCategory(stage, 3);
+            try {
+                showProdsInCategory(stage, 3);
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
         });
 
         Electronics.setOnMouseClicked(e->{
-            showProdsInCategory(stage, 4);
+            try {
+                showProdsInCategory(stage, 4);
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
         });
     }
 
-    public static void showProfile(Stage stage){
+    public static void showProfile(Stage stage) throws SQLException {
         profilePage.show(stage);
     }
 
-    public static void showProdsInCategory(Stage stage, int category){
+    public static void showProdsInCategory(Stage stage, int category) throws SQLException {
         if(category == 1){
             allProductsPage.show(stage, category);
         }else if(category == 2){

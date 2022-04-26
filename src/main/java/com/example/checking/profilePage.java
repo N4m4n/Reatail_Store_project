@@ -7,10 +7,12 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class profilePage {
-    public static void show(Stage stage){
+    public static void show(Stage stage) throws SQLException {
 
 
         Pane main = new Pane();
@@ -43,7 +45,11 @@ public class profilePage {
         ListView<String> cartsList = new ListView<String>();
         ArrayList<String> carts = new ArrayList<>();
 //        TODO: add the items to the cart
-        carts.add("cart");
+//        carts.add("cart");
+        ArrayList<String> temp = getItemsInCart(HelloApplication.customerID);
+        int total = Integer.valueOf(temp.get(temp.size()-1));
+        temp.remove(temp.size()-1);
+        carts.addAll(temp);
         cartsList.getItems().addAll(carts);
         cartsList.setLayoutX(100);
         cartsList.setLayoutY(250);
@@ -91,6 +97,22 @@ public class profilePage {
 
 
 
+    public static ArrayList<String> getItemsInCart(int custID) throws SQLException {
+        String query = """
+                with product_list (productID, productName, price) as (select productID, productName, price from products) 
+                select product_list.productID, productName, quantity, price*quantity as subtotal from product_list natural join cart where cart.customerID = """+custID;
+
+        ResultSet rs = HelloApplication.retrieveData(query, 1);
+        ArrayList<String> allItems = new ArrayList<>();
+        int totalCartCost = 0;
+        while(rs.next()){
+            allItems.add(rs.getString("productName")+" x "+rs.getString("quantity")+" = "+rs.getString("subTotal"));
+            totalCartCost += Double.parseDouble(rs.getString("subTotal"));
+        }
+
+        allItems.add(""+totalCartCost);
+        return allItems;
+    }
     public static TableView getOrdersTable(int customerId){
         TableView orderTable = new TableView();
 

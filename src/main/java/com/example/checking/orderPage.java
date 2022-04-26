@@ -8,6 +8,8 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
+import java.sql.SQLException;
+
 public class orderPage {
 
     public static void show(int orderID, Stage stage){
@@ -23,7 +25,11 @@ public class orderPage {
         back.setLayoutX(20);
         back.setLayoutY(20);
         back.setOnAction(e->{
-            profilePage.show(stage);
+            try {
+                profilePage.show(stage);
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
         });
 
         main.getChildren().addAll(productList, back);
