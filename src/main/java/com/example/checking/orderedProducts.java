@@ -1,6 +1,7 @@
 package com.example.checking;
 
 public class orderedProducts {
+    private int productID;
     private String productName;
     private int quantity;
     private int totalCost;
@@ -11,6 +12,14 @@ public class orderedProducts {
         this.quantity = quantity;
         this.totalCost = totalCost;
     }
+
+    public orderedProducts(int productID, String productName, int quantity, int totalCost){
+        this.productID = productID;
+        this.productName = productName;
+        this.quantity = quantity;
+        this.totalCost = totalCost;
+    }
+
     public String getProductName(){
         return this.productName;
     }
@@ -20,6 +29,8 @@ public class orderedProducts {
     public int getTotalCost(){
         return this.totalCost;
     }
+    public int getProductID(){return this.productID;}
+
 
 }
 

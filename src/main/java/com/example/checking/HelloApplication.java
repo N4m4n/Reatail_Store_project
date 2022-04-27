@@ -90,28 +90,7 @@ public class HelloApplication extends Application {
                 ex.printStackTrace();
             }
 
-//            try {
-//                Class.forName("com.mysql.cj.jdbc.Driver");
-//                Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/retailstore", "root", "ComeCode1608");
-//
-//                CallableStatement cstmt = conn.prepareCall("{call getOrderList()}");
-//
-//                //Retrieving the result
-//                ResultSet rs = cstmt.executeQuery();
-//                while(rs.next()) {
-//                    System.out.println("Product Name: "+rs.getString("firstName"));
-//                    System.out.println("Date of Dispatch: "+rs.getString("lastName"));
-////                    System.out.println("Time of Dispatch: "+rs.getTime("Time_Of_Dispatch"));
-////                    System.out.println("Location: "+rs.getString("Location"));
-////                    System.out.println();
-//                }
-//
-//
-//            } catch (ClassNotFoundException ex) {
-//                ex.printStackTrace();
-//            } catch (SQLException ex) {
-//                ex.printStackTrace();
-//            }
+
         });
 
         main.getChildren().addAll(registerC,registerS, login, password, emailPh, Pass, EmailPh, askingToRegister);
@@ -259,6 +238,24 @@ public class HelloApplication extends Application {
 
         }
         return false;
+    }
+    public static ResultSet callFunction(String query, int level){
+        try {
+                Class.forName("com.mysql.cj.jdbc.Driver");
+                Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/retailstore", "root", "ComeCode1608");
+
+                CallableStatement cstmt = conn.prepareCall(query);
+
+                //Retrieving the result
+                ResultSet rs = cstmt.executeQuery();
+                return rs;
+
+            } catch (ClassNotFoundException ex) {
+                ex.printStackTrace();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        return null;
     }
 
     public static void showError(String title, String main){

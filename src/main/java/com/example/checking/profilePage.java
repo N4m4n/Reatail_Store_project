@@ -1,6 +1,5 @@
 package com.example.checking;
 
-import javafx.geometry.Orientation;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -42,19 +41,23 @@ public class profilePage {
         Cart.setLayoutY(232);
         Cart.setLayoutX(100);
 
-        ListView<String> cartsList = new ListView<String>();
-        ArrayList<String> carts = new ArrayList<>();
-//        TODO: add the items to the cart
-//        carts.add("cart");
-        ArrayList<String> temp = getItemsInCart(HelloApplication.customerID);
-        int total = Integer.valueOf(temp.get(temp.size()-1));
-        temp.remove(temp.size()-1);
-        carts.addAll(temp);
-        cartsList.getItems().addAll(carts);
+        TableView cartsList = getItemsInCartTable(HelloApplication.customerID);
+
+
+        ArrayList<orderedProducts> temp = getItemsInCart(HelloApplication.customerID);
+
+
+        cartsList.getItems().addAll(temp);
+
         cartsList.setLayoutX(100);
         cartsList.setLayoutY(250);
         cartsList.setPrefHeight(150);
         cartsList.setPrefWidth(600);
+
+        Label cartTotal = new Label();
+        cartTotal.setLayoutX(720);
+        cartTotal.setLayoutY(300);
+        cartTotal.setText(getCartTotal(HelloApplication.customerID));
 
         Label ordersLabel = new Label("Orders");
         ordersLabel.setLayoutY(405);
@@ -88,29 +91,33 @@ public class profilePage {
             orderConfirmation.show(stage);
         });
 
-        main.getChildren().addAll(orderButton, addresses, addr, cartsList, Cart, ordersLabel, ordersTable, back);
+        main.getChildren().addAll(cartTotal, orderButton, addresses, addr, cartsList, Cart, ordersLabel, ordersTable, back);
         Scene profileScene = new Scene(main, 800, 600);
         stage.setScene(profileScene);
 
 
     }
 
+    public static String getCartTotal(int custID) throws SQLException {
 
+        ResultSet rs = HelloApplication.callFunction("select getOrderAmount("+custID+")", 0);
+        rs.next();
+        return String.valueOf(rs.getFloat("getorderAmount("+custID+")"));
+    }
 
-    public static ArrayList<String> getItemsInCart(int custID) throws SQLException {
+    public static ArrayList<orderedProducts> getItemsInCart(int custID) throws SQLException {
         String query = """
                 with product_list (productID, productName, price) as (select productID, productName, price from products) 
                 select product_list.productID, productName, quantity, price*quantity as subtotal from product_list natural join cart where cart.customerID = """+custID;
 
         ResultSet rs = HelloApplication.retrieveData(query, 1);
-        ArrayList<String> allItems = new ArrayList<>();
+        ArrayList<orderedProducts> allItems = new ArrayList<>();
         int totalCartCost = 0;
         while(rs.next()){
-            allItems.add(rs.getString("productName")+" x "+rs.getString("quantity")+" = "+rs.getString("subTotal"));
+            orderedProducts toAdd = new orderedProducts(rs.getInt("productID"), rs.getString("productName"), rs.getInt("quantity"), rs.getInt("subTotal"));
+            allItems.add(toAdd);
             totalCartCost += Double.parseDouble(rs.getString("subTotal"));
         }
-
-        allItems.add(""+totalCartCost);
         return allItems;
     }
     public static TableView getOrdersTable(int customerId){
@@ -144,5 +151,44 @@ public class profilePage {
 
         return orderTable;
     }
+
+    public static TableView getItemsInCartTable(int customerId){
+        TableView cartTable = new TableView();
+
+        TableColumn<orderedProducts, String> orderID = new TableColumn();
+        orderID.setText("Prod ID");
+        orderID.setPrefWidth(100);
+        orderID.setResizable(false);
+        orderID.setCellValueFactory(new PropertyValueFactory<>("productID"));
+
+        TableColumn<orderedProducts, String> date = new TableColumn();
+        date.setText("Name of Product");
+        date.setPrefWidth(200);
+        date.setResizable(false);
+        date.setCellValueFactory(new PropertyValueFactory<>("productName"));
+
+
+        TableColumn<orderedProducts, String> price = new TableColumn();
+        price.setText("Quantity");
+        price.setPrefWidth(100);
+        price.setResizable(false);
+        price.setCellValueFactory(new PropertyValueFactory<>("quantity"));
+
+        TableColumn<orderedProducts, String> subTotal = new TableColumn();
+        subTotal.setText("Sub total");
+        subTotal.setPrefWidth(100);
+        subTotal.setResizable(false);
+        subTotal.setCellValueFactory(new PropertyValueFactory<>("totalCost"));
+
+
+
+        cartTable.getColumns().addAll(orderID, date, price, subTotal);
+
+
+
+
+        return cartTable;
+    }
+
 
 }

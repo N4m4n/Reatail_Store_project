@@ -1,16 +1,12 @@
 package com.example.checking;
-
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Queue;
-import java.util.concurrent.atomic.AtomicReferenceArray;
 
 public class allProductsPage {
 
