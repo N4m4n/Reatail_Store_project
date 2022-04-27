@@ -143,10 +143,6 @@ public class profilePage {
 
         addr.getColumns().addAll(addID, addressLine, pincode);
 
-        //TODO: Make a function that returns an Arraylist of orders for this customer.
-        addr.getItems().addAll(new address(2,"3",4));
-
-
         return addr;
     }
     public static String getCartTotal(int custID) throws SQLException {
@@ -197,10 +193,10 @@ public class profilePage {
         return orderTable;
     }
     public static ArrayList<order> getOrdersList(int customerID) throws SQLException {
-        String query = "select orderID, modeOfPayment, dateAndTime from place where place.customerID = "+customerID;
+        String query = "select orderID, orders.modeOfPayment, dateAndTime from place join orders using(orderID) where place.customerID = "+customerID;
         ArrayList<order> toRet = new ArrayList<>();
         ResultSet rs = HelloApplication.retrieveData(query, 0);
-        while(rs.next()){
+        while(rs.next()) {
             toRet.add(new order(rs.getInt("orderID"), rs.getString("modeOfPayment"), rs.getString("dateAndTime")));
         }
         return toRet;

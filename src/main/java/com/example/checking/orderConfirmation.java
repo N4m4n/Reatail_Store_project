@@ -4,8 +4,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
-
-import java.security.spec.EllipticCurve;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -61,21 +59,70 @@ public class orderConfirmation {
         applyCoupon.setOnAction(e->{
 //            TODO: check if coupon is valid and according apply.
 
+            String appliedCoupon = couponField.getText();
+            try {
+                String query = "{call apply_Coupon("+appliedCoupon+", "+profilePage.getCartTotal(HelloApplication.customerID)+", \'"+java.time.LocalDate.now()+"\')}";
+                ResultSet rs = HelloApplication.callFunction(query, 0);
+                if(false){
+                    int res = rs.getInt("isValid");
+                    if(res==0){
+                        HelloApplication.showError("Invalid Coupon", "The coupon entered cannot be used");
+                    }else{
+
+                    }
+                }else{
+                    HelloApplication.showError("Invalid Coupon", "The coupon entered cannot be used");
+                }
+
+
+            } catch (SQLException ex) {
+                System.out.println("www");
+                ex.printStackTrace();
+            }
+
+
+
         });
 
         placeOrder.setOnAction(e->{
 //            TODO: clear the cart and add the order.
-            Dialog<String> dialog = new Dialog<String>();
+            int indAdd = addresses.getSelectionModel().getSelectedIndex();
+            int indCard = cardDetails.getSelectionModel().getSelectedIndex();
+            if (indAdd == -1 || indCard == -1){
+                HelloApplication.showError("Missing details", "Please enter all the details");
+            }else{
 
-            dialog.setTitle("Order Placed.");
-            dialog.setHeight(200);
-            dialog.setWidth(400);
-            ButtonType type = new ButtonType("Ok", ButtonBar.ButtonData.OK_DONE);
-            dialog.setContentText("Congratulations, your order has been placed!");
-            //Adding buttons to the dialog pane
-            dialog.getDialogPane().getButtonTypes().add(type);
-            dialog.showAndWait();
-            HomePage.show(stage);
+
+                String mop = "";
+                if (indCard == 0){
+                    mop = "COD";
+                }else{
+                    mop = "Online";
+                }
+                int addID = completeAdd.get(indAdd).getAddressID();
+                try {
+                    String query = "insert into orders (addressID, amount, modeOfPayment) values ("+ addID+", "+profilePage.getCartTotal(HelloApplication.customerID)+", \'"+mop+"\')";
+                    System.out.println(query);
+                    HelloApplication.sendData(query, 1);
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+
+                Dialog<String> dialog = new Dialog<String>();
+
+                dialog.setTitle("Order Placed.");
+                dialog.setHeight(200);
+                dialog.setWidth(400);
+                ButtonType type = new ButtonType("Ok", ButtonBar.ButtonData.OK_DONE);
+                dialog.setContentText("Congratulations, your order has been placed!");
+                //Adding buttons to the dialog pane
+                dialog.getDialogPane().getButtonTypes().add(type);
+                dialog.showAndWait();
+                HomePage.show(stage);
+
+            }
+
+
 
         });
 

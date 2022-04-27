@@ -222,11 +222,12 @@ public class HelloApplication extends Application {
 
             try{
                 Class.forName("com.mysql.cj.jdbc.Driver");
+                System.out.println(query);
                 Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/retailstore", "root", "ComeCode1608");
-//                query = "insert into orderedProducts values (1, \'soap\', 3, 'sanitary', 10.0, 'good soap')";
+
                 PreparedStatement pst = conn.prepareStatement(query);
                 pst.executeUpdate();
-                System.out.println(query);
+
                 return true;
 
             }catch(Exception e2){
@@ -251,8 +252,10 @@ public class HelloApplication extends Application {
                 return rs;
 
             } catch (ClassNotFoundException ex) {
+            System.out.println("32");
                 ex.printStackTrace();
             } catch (SQLException ex) {
+            System.out.println("423");
                 ex.printStackTrace();
             }
         return null;
