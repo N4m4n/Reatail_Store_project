@@ -4,7 +4,9 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.Pane;
+import javafx.scene.shape.HLineTo;
 import javafx.stage.Stage;
+import org.controlsfx.control.CheckListView;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -27,23 +29,21 @@ public class profilePage {
             HomePage.show(stage);
         });
 
-        ListView<String> addresses = new ListView<String>();
-        ArrayList<String> allAddresses = new ArrayList<>();
-        allAddresses.add("lol");
-        //        TODO: add the addresses
-        addresses.getItems().addAll(allAddresses);
+        TableView addresses = getAddressesTable(HelloApplication.customerID);
+        ArrayList<address> addList = getAddresses(HelloApplication.customerID);
+        addresses.getItems().addAll(addList);
         addresses.setLayoutX(100);
         addresses.setLayoutY(60);
         addresses.setPrefHeight(150);
         addresses.setPrefWidth(600);
+
+        getAddresses(HelloApplication.customerID);
 
         Label Cart = new Label("Cart");
         Cart.setLayoutY(232);
         Cart.setLayoutX(100);
 
         TableView cartsList = getItemsInCartTable(HelloApplication.customerID);
-
-
         ArrayList<orderedProducts> temp = getItemsInCart(HelloApplication.customerID);
 
 
@@ -91,20 +91,61 @@ public class profilePage {
             orderConfirmation.show(stage);
         });
 
-        main.getChildren().addAll(cartTotal, orderButton, addresses, addr, cartsList, Cart, ordersLabel, ordersTable, back);
+        main.getChildren().addAll(cartTotal, orderButton, addr, cartsList, Cart, ordersLabel, ordersTable, back, addresses);
         Scene profileScene = new Scene(main, 800, 600);
         stage.setScene(profileScene);
 
 
     }
+    public static ArrayList<address> getAddresses(int custID) throws SQLException {
+        String query = "{call getAddressList("+custID+")}";
+        ResultSet rs = HelloApplication.callFunction(query, 0);
+        ArrayList<address> toRet = new ArrayList<>();
+        while(rs.next()){
+            address toAdd = new address(rs.getInt("addressID"), rs.getString("addressLine1"), rs.getInt("pincode"));
+            System.out.println(rs.getInt("addressID")+" "+ rs.getString("addressLine1")+" "+rs.getInt("pincode"));
+            toRet.add(toAdd);
+        }
+        return toRet;
+    }
 
+    public static TableView getAddressesTable(int customerId){
+        TableView addr = new TableView();
+
+        TableColumn<address, Integer> addID = new TableColumn();
+        addID.setText("Address ID");
+        addID.setPrefWidth(200);
+        addID.setResizable(false);
+        addID.setCellValueFactory(new PropertyValueFactory<>("addressID"));
+
+        TableColumn<address, String> addressLine = new TableColumn();
+        addressLine.setText("Address");
+        addressLine.setPrefWidth(200);
+        addressLine.setResizable(false);
+        addressLine.setCellValueFactory(new PropertyValueFactory<>("addressLine"));
+
+
+        TableColumn<address, Integer> pincode = new TableColumn();
+        pincode.setText("Pincode");
+        pincode.setPrefWidth(200);
+        pincode.setResizable(false);
+        pincode.setCellValueFactory(new PropertyValueFactory<>("pinCode"));
+
+
+        addr.getColumns().addAll(addID, addressLine, pincode);
+
+        //TODO: Make a function that returns an Arraylist of orders for this customer.
+        addr.getItems().addAll(new address(2,"3",4));
+
+
+        return addr;
+    }
     public static String getCartTotal(int custID) throws SQLException {
 
         ResultSet rs = HelloApplication.callFunction("select getOrderAmount("+custID+")", 0);
         rs.next();
         return String.valueOf(rs.getFloat("getorderAmount("+custID+")"));
     }
-
     public static ArrayList<orderedProducts> getItemsInCart(int custID) throws SQLException {
         String query = """
                 with product_list (productID, productName, price) as (select productID, productName, price from products) 
@@ -151,7 +192,6 @@ public class profilePage {
 
         return orderTable;
     }
-
     public static TableView getItemsInCartTable(int customerId){
         TableView cartTable = new TableView();
 
@@ -180,12 +220,7 @@ public class profilePage {
         subTotal.setResizable(false);
         subTotal.setCellValueFactory(new PropertyValueFactory<>("totalCost"));
 
-
-
         cartTable.getColumns().addAll(orderID, date, price, subTotal);
-
-
-
 
         return cartTable;
     }
