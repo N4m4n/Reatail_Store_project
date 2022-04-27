@@ -5,10 +5,13 @@ import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
+import java.security.spec.EllipticCurve;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 public class orderConfirmation {
-    public static void show(Stage stage){
+    public static void show(Stage stage) throws SQLException {
         Pane main = new Pane();
         ComboBox<String> addresses = new ComboBox();
 
@@ -23,15 +26,16 @@ public class orderConfirmation {
             }
         });
 
-        addresses.getItems().addAll("Address1", "Address 2");
+        ArrayList<address> completeAdd = profilePage.getAddresses(HelloApplication.customerID);
+        addresses.getItems().addAll(getAddressLines(completeAdd));
         addresses.setLayoutX(100);
         addresses.setLayoutY(100);
         addresses.setPrefWidth(600);
 
 
         ComboBox<String> cardDetails = new ComboBox();
-
-        cardDetails.getItems().addAll("card1", "card2");
+        cardDetails.getItems().addAll("COD");
+        cardDetails.getItems().addAll(getCardsInfo(HelloApplication.customerID));
         cardDetails.setLayoutX(100);
         cardDetails.setLayoutY(200);
         cardDetails.setPrefWidth(600);
@@ -56,6 +60,7 @@ public class orderConfirmation {
 
         applyCoupon.setOnAction(e->{
 //            TODO: check if coupon is valid and according apply.
+
         });
 
         placeOrder.setOnAction(e->{
@@ -79,5 +84,24 @@ public class orderConfirmation {
         Scene orderConfirmScene = new Scene(main, 800, 600);
         stage.setScene(orderConfirmScene);
 
+    }
+
+    public static ArrayList<String> getCardsInfo(int custID) throws SQLException {
+        String query = "select * from paymentinfo where paymentinfo.customerID = "+custID;
+        ArrayList<String> toRet = new ArrayList<>();
+
+        ResultSet rs = HelloApplication.retrieveData(query, 0);
+        while(rs.next()){
+            toRet.add(String.valueOf(rs.getString("cardNo")));
+        }
+        return toRet;
+    }
+
+    public static ArrayList<String> getAddressLines(ArrayList<address> a){
+        ArrayList<String> toRet = new ArrayList<>();
+        for(int i = 0; i<a.size(); i++){
+            toRet.add(a.get(i).getAddressLine());
+        }
+        return toRet;
     }
 }

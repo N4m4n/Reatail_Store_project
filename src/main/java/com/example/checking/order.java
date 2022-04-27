@@ -2,22 +2,22 @@ package com.example.checking;
 
 public class order {
     private int orderID;
-    private String dateOfPurchase;
-    private float price;
+    private String modeOfPayment;
+    private String date;
 
-    order(int orderID, String date, float price){
+    order(int orderID, String modeOfPayment, String date){
         this.orderID = orderID;
-        this.dateOfPurchase = date;
-        this.price = price;
+        this.modeOfPayment = modeOfPayment;
+        this.date = date;
     }
     public int getOrderID(){
         return this.orderID;
 
     }
-    public String getDateOfPurchase(){
-        return  this.dateOfPurchase;
+    public String getModeOfPayment(){
+        return  this.modeOfPayment;
     }
-    public float getPrice(){
-        return this.price;
+    public String getDate(){
+        return this.date;
     }
 }

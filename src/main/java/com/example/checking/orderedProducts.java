@@ -13,6 +13,12 @@ public class orderedProducts {
         this.totalCost = totalCost;
     }
 
+    public orderedProducts(int productID, int quantity){
+        this.productID = productID;
+        this.quantity = quantity;
+
+    }
+
     public orderedProducts(int productID, String productName, int quantity, int totalCost){
         this.productID = productID;
         this.productName = productName;

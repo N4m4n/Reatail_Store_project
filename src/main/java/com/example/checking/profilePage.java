@@ -69,6 +69,7 @@ public class profilePage {
         ordersTable.setEditable(false);
         ordersTable.setPrefHeight(150);
         ordersTable.setPrefWidth(600);
+        ordersTable.getItems().addAll(getOrdersList(HelloApplication.customerID));
 
         ordersTable.setRowFactory( tv -> {
             TableRow<order> row = new TableRow<>();
@@ -77,7 +78,11 @@ public class profilePage {
                     order rowData = row.getItem();
                     int orderIDchosen = rowData.getOrderID();
                     System.out.println(orderIDchosen);
-                    orderPage.show(orderIDchosen, stage);
+                    try {
+                        orderPage.show(orderIDchosen, stage);
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
 
                 }
             });
@@ -88,7 +93,11 @@ public class profilePage {
         orderButton.setLayoutY(270);
         orderButton.setLayoutX(5);
         orderButton.setOnAction(e->{
-            orderConfirmation.show(stage);
+            try {
+                orderConfirmation.show(stage);
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
         });
 
         main.getChildren().addAll(cartTotal, orderButton, addr, cartsList, Cart, ordersLabel, ordersTable, back, addresses);
@@ -170,27 +179,32 @@ public class profilePage {
         orderID.setResizable(false);
         orderID.setCellValueFactory(new PropertyValueFactory<>("orderID"));
 
+        TableColumn<order, String> mop = new TableColumn();
+        mop.setText("Mode of Payment");
+        mop.setPrefWidth(200);
+        mop.setResizable(false);
+        mop.setCellValueFactory(new PropertyValueFactory<>("modeOfPayment"));
+
+
         TableColumn<order, String> date = new TableColumn();
-        date.setText("Date Of Order");
+        date.setText("Date");
         date.setPrefWidth(200);
         date.setResizable(false);
-        date.setCellValueFactory(new PropertyValueFactory<>("dateOfPurchase"));
+        date.setCellValueFactory(new PropertyValueFactory<>("date"));
 
 
-        TableColumn<order, String> price = new TableColumn();
-        price.setText("Price");
-        price.setPrefWidth(200);
-        price.setResizable(false);
-        price.setCellValueFactory(new PropertyValueFactory<>("price"));
-
-
-        orderTable.getColumns().addAll(orderID, date, price);
-
-        //TODO: Make a function that returns an Arraylist of orders for this customer.
-        orderTable.getItems().addAll(new order(2,"3",4));
-
-
+        orderTable.getColumns().addAll(orderID, mop, date);
         return orderTable;
+    }
+    public static ArrayList<order> getOrdersList(int customerID) throws SQLException {
+        String query = "select orderID, modeOfPayment, dateAndTime from place where place.customerID = "+customerID;
+        ArrayList<order> toRet = new ArrayList<>();
+        ResultSet rs = HelloApplication.retrieveData(query, 0);
+        while(rs.next()){
+            toRet.add(new order(rs.getInt("orderID"), rs.getString("modeOfPayment"), rs.getString("dateAndTime")));
+        }
+        return toRet;
+
     }
     public static TableView getItemsInCartTable(int customerId){
         TableView cartTable = new TableView();
