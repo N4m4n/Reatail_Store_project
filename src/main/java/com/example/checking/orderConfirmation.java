@@ -4,6 +4,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+
+import java.lang.module.ResolvedModule;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -32,20 +34,44 @@ public class orderConfirmation {
 
         Button addAddr = new Button("Add Address");
         addAddr.setLayoutX(710);
-        addAddr.setLayoutY(150);
+        addAddr.setLayoutY(140);
         addAddr.setOnAction(e->{
             newAddress.show(stage);
         });
         main.getChildren().addAll(addAddr);
 
+        Button removeSelectedAdd = new Button("Remove address");
+        removeSelectedAdd.setLayoutY(170);
+        removeSelectedAdd.setLayoutX(700);
+        removeSelectedAdd.setOnAction(e->{
+            int indAdd = addresses.getSelectionModel().getSelectedIndex();
+            if(indAdd != -1){
+                int addID = completeAdd.get(indAdd).getAddressID();
+                String query = "delete from address where addressID = "+ addID;
+                HelloApplication.sendData(query, 1);
+                try {
+                    orderConfirmation.show(stage);
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+
+            }
+
+        });
+        main.getChildren().addAll(removeSelectedAdd);
 
         Button addCard = new Button("Add Card");
         addCard.setLayoutX(710);
-        addCard.setLayoutY(300);
+        addCard.setLayoutY(290);
         addCard.setOnAction(e->{
             newCard.show(stage);
         });
         main.getChildren().addAll(addCard);
+
+        Button removeSelectedCard = new Button("Remove Card");
+        removeSelectedCard.setLayoutX(700);
+        removeSelectedCard.setLayoutY(320);
+        main.getChildren().addAll(removeSelectedCard);
 
 
 
@@ -55,6 +81,21 @@ public class orderConfirmation {
         cardDetails.setLayoutX(100);
         cardDetails.setLayoutY(200);
         cardDetails.setPrefWidth(600);
+
+        removeSelectedCard.setOnAction(e->{
+            String selected = cardDetails.getSelectionModel().getSelectedItem();
+            if(!selected.equals("COD")){
+                String query = "delete from paymentInfo where cardNo = "+selected;
+                HelloApplication.sendData(query, 1);
+                try {
+                    orderConfirmation.show(stage);
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+            }
+
+        });
+
 
         Button placeOrder = new Button("Place Order");
         placeOrder.setLayoutX(150);
