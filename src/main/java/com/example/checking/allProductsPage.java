@@ -47,6 +47,31 @@ public class allProductsPage {
         checkout.setLayoutX(450);
         checkout.setLayoutY(550);
 
+        TextArea feedback = new TextArea();
+        feedback.setLayoutY(500);
+        feedback.setLayoutX(45);
+        feedback.setPrefWidth(200);
+        feedback.setPrefHeight(80);
+        main.getChildren().add(feedback);
+
+        Button sendFeedback = new Button("Give feedback for selected");
+        sendFeedback.setLayoutX(260);
+        sendFeedback.setLayoutY(500);
+        sendFeedback.setOnAction(e->{
+            availableProducts curr = (availableProducts) categoryWiseProducts.getSelectionModel().getSelectedItem();
+            String feed = feedback.getText();
+            feed = feed.strip();
+            if(feed.length()> 0){
+                String query = "insert into feedback values ("+curr.getProductID()+", "+HelloApplication.customerID+", \'"+feed+"\')";
+                HelloApplication.sendData(query, 1);
+                HelloApplication.showError("Sent", "Thank you for providing your valuable feedback!");
+                feedback.setText("");
+
+            }
+
+        });
+        main.getChildren().add(sendFeedback);
+
         checkout.setOnAction(e->{
             try {
                 profilePage.show(stage);
