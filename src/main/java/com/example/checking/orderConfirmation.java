@@ -30,6 +30,24 @@ public class orderConfirmation {
         addresses.setLayoutY(100);
         addresses.setPrefWidth(600);
 
+        Button addAddr = new Button("Add Address");
+        addAddr.setLayoutX(710);
+        addAddr.setLayoutY(150);
+        addAddr.setOnAction(e->{
+            newAddress.show(stage);
+        });
+        main.getChildren().addAll(addAddr);
+
+
+        Button addCard = new Button("Add Card");
+        addCard.setLayoutX(710);
+        addCard.setLayoutY(300);
+        addCard.setOnAction(e->{
+            newCard.show(stage);
+        });
+        main.getChildren().addAll(addCard);
+
+
 
         ComboBox<String> cardDetails = new ComboBox();
         cardDetails.getItems().addAll("COD");
@@ -85,7 +103,7 @@ public class orderConfirmation {
         });
 
         placeOrder.setOnAction(e->{
-//            TODO: clear the cart and add the order.
+
             int indAdd = addresses.getSelectionModel().getSelectedIndex();
             int indCard = cardDetails.getSelectionModel().getSelectedIndex();
             if (indAdd == -1 || indCard == -1){
