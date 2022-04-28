@@ -6,12 +6,13 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 import java.lang.module.ResolvedModule;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 
 public class orderConfirmation {
+    static float discountOnOrder = 0;
     public static void show(Stage stage) throws SQLException {
+        discountOnOrder = 0;
         Pane main = new Pane();
         ComboBox<String> addresses = new ComboBox();
 
@@ -116,25 +117,44 @@ public class orderConfirmation {
         applyCoupon.setLayoutX(320);
 
         applyCoupon.setOnAction(e->{
-//            TODO: check if coupon is valid and according apply.
-
             String appliedCoupon = couponField.getText();
             try {
-                String query = "{call apply_Coupon("+appliedCoupon+", "+profilePage.getCartTotal(HelloApplication.customerID)+", \'"+java.time.LocalDate.now()+"\')}";
-                ResultSet rs = HelloApplication.callFunction(query, 0);
-                if(false){
-                    int res = rs.getInt("isValid");
-                    if(res==0){
-                        HelloApplication.showError("Invalid Coupon", "The coupon entered cannot be used");
-                    }else{
+                String query = "{call apply_Coupon(?, ?, ?, ?, ?)}";
 
+                try {
+                    Class.forName("com.mysql.cj.jdbc.Driver");
+                    Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/retailstore", "root", "ComeCode1608");
+
+                    CallableStatement cstmt = conn.prepareCall(query);
+                    cstmt.setInt(1, Integer.valueOf(appliedCoupon));
+                    cstmt.setFloat(2, Float.valueOf(profilePage.getCartTotal(HelloApplication.customerID)));
+                    cstmt.setDate(3, Date.valueOf(java.time.LocalDate.now()));
+
+                    cstmt.registerOutParameter(4, java.sql.Types.INTEGER);
+
+                    cstmt.registerOutParameter(5, java.sql.Types.FLOAT);
+                    cstmt.executeUpdate();
+
+                    int isValid = cstmt.getInt(4);
+
+                    float discount = cstmt.getFloat(5);
+                    if(isValid == 1){
+                        discountOnOrder = discount;
+                        HelloApplication.showError("Applied", "Hurray! you saved "+discountOnOrder);
+                    }else{
+                        HelloApplication.showError("Cannot use coupon", "This coupon is not valid");
                     }
-                }else{
-                    HelloApplication.showError("Invalid Coupon", "The coupon entered cannot be used");
+
+
+                } catch (ClassNotFoundException ex) {
+
+                    ex.printStackTrace();
+                } catch (SQLException ex) {
+
+                    ex.printStackTrace();
                 }
 
-
-            } catch (SQLException ex) {
+            } catch (Exception ex) {
                 System.out.println("www");
                 ex.printStackTrace();
             }
@@ -160,7 +180,8 @@ public class orderConfirmation {
                 }
                 int addID = completeAdd.get(indAdd).getAddressID();
                 try {
-                    String query = "insert into orders (addressID, amount, modeOfPayment) values ("+ addID+", "+profilePage.getCartTotal(HelloApplication.customerID)+", \'"+mop+"\')";
+                    float finalAmt = Float.valueOf(profilePage.getCartTotal(HelloApplication.customerID)) - discountOnOrder;
+                    String query = "insert into orders (addressID, amount, modeOfPayment) values ("+ addID+", "+finalAmt+", \'"+mop+"\')";
                     System.out.println(query);
                     HelloApplication.sendData(query, 1);
                 } catch (SQLException ex) {

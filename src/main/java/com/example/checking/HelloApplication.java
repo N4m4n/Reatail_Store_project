@@ -252,10 +252,10 @@ public class HelloApplication extends Application {
                 return rs;
 
             } catch (ClassNotFoundException ex) {
-            System.out.println("32");
+
                 ex.printStackTrace();
             } catch (SQLException ex) {
-            System.out.println("423");
+
                 ex.printStackTrace();
             }
         return null;
