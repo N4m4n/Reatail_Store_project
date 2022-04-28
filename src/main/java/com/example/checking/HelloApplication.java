@@ -44,7 +44,7 @@ public class HelloApplication extends Application {
         EmailPh.setLayoutX(300);
         EmailPh.setLayoutY(200);
 
-        TextField Pass = new TextField();
+        PasswordField Pass = new PasswordField();
         Pass.setLayoutX(300);
         Pass.setLayoutY(250);
 

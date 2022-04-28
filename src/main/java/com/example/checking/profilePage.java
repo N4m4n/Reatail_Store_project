@@ -29,6 +29,15 @@ public class profilePage {
             HomePage.show(stage);
         });
 
+        Button changePasswrd = new Button("Change Password");
+        changePasswrd.setLayoutX(670);
+        changePasswrd.setLayoutY(30);
+        main.getChildren().add(changePasswrd);
+        changePasswrd.setOnAction(e->{
+            changePassword.show(stage);
+        });
+
+
         TableView addresses = getAddressesTable(HelloApplication.customerID);
         ArrayList<address> addList = getAddresses(HelloApplication.customerID);
         addresses.getItems().addAll(addList);
