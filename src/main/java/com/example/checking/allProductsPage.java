@@ -55,8 +55,8 @@ public class allProductsPage {
         main.getChildren().add(feedback);
 
         Button sendFeedback = new Button("Give feedback for selected");
-        sendFeedback.setLayoutX(260);
-        sendFeedback.setLayoutY(500);
+        sendFeedback.setLayoutX(45);
+        sendFeedback.setLayoutY(470);
         sendFeedback.setOnAction(e->{
             availableProducts curr = (availableProducts) categoryWiseProducts.getSelectionModel().getSelectedItem();
             String feed = feedback.getText();
@@ -71,6 +71,45 @@ public class allProductsPage {
 
         });
         main.getChildren().add(sendFeedback);
+
+
+
+        TextArea complaint = new TextArea();
+        complaint.setLayoutY(500);
+        complaint.setLayoutX(550);
+        complaint.setPrefWidth(200);
+        complaint.setPrefHeight(80);
+        main.getChildren().add(complaint);
+
+        Button sendComplaint = new Button("File complaint");
+        sendComplaint.setLayoutX(550);
+        sendComplaint.setLayoutY(470);
+        sendComplaint.setOnAction(e->{
+            availableProducts curr = (availableProducts) categoryWiseProducts.getSelectionModel().getSelectedItem();
+            String feed = complaint.getText();
+            feed = feed.strip();
+            if(feed.length()> 0){
+                String query = "insert into complaints (productID, customerID, comments) values ("+curr.getProductID()+", "+HelloApplication.customerID+", \'"+feed+"\')";
+                HelloApplication.sendData(query, 1);
+                HelloApplication.showError("Sent", "You complaint will be handled by our employee soon.");
+                complaint.setText("");
+
+            }
+
+        });
+        main.getChildren().add(sendComplaint);
+
+
+
+
+
+
+
+
+
+
+
+
 
         checkout.setOnAction(e->{
             try {
