@@ -1,5 +1,6 @@
 package com.example.checking;
 
+import eu.hansolo.tilesfx.tools.MovingAverage;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
@@ -32,6 +33,11 @@ public class orderConfirmation {
         addresses.setLayoutX(100);
         addresses.setLayoutY(100);
         addresses.setPrefWidth(600);
+
+        Label addressPrompt = new Label("Choose your address");
+        addressPrompt.setLayoutX(100);
+        addressPrompt.setLayoutY(80);
+        main.getChildren().add(addressPrompt);
 
         Button addAddr = new Button("Add Address");
         addAddr.setLayoutX(710);
@@ -75,12 +81,16 @@ public class orderConfirmation {
         main.getChildren().addAll(removeSelectedCard);
 
 
+        Label cardPrompt = new Label("Choose mode of payment:");
+        cardPrompt.setLayoutY(200);
+        cardPrompt.setLayoutX(100);
+        main.getChildren().add(cardPrompt);
 
         ComboBox<String> cardDetails = new ComboBox();
         cardDetails.getItems().addAll("COD");
         cardDetails.getItems().addAll(getCardsInfo(HelloApplication.customerID));
         cardDetails.setLayoutX(100);
-        cardDetails.setLayoutY(200);
+        cardDetails.setLayoutY(220);
         cardDetails.setPrefWidth(600);
 
         removeSelectedCard.setOnAction(e->{
