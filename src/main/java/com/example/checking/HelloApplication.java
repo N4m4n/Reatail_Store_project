@@ -65,6 +65,15 @@ public class HelloApplication extends Application {
             supplierLogin.show(stage);
         });
 
+        Button registerE = new Button("Login Employee");
+        registerE.setLayoutX(600);
+        registerE.setLayoutY(100);
+        registerE.setOnAction(e->{
+            employeeLogin.show(stage);
+        });
+        main.getChildren().add(registerE);
+
+
         Button login = new Button("Log in");
         login.setLayoutX(400);
         login.setLayoutY(300);
