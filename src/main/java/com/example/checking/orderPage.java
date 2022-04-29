@@ -54,14 +54,13 @@ public class orderPage {
         quantity.setResizable(false);
         quantity.setCellValueFactory(new PropertyValueFactory<>("quantity"));
         productsTable.getColumns().addAll(prodID, quantity);
-        //TODO: Make a function that returns an Arraylist of product for this order ID.
         productsTable.getItems().addAll(getOrderedProds(orderId));
         return productsTable;
     }
 
     public static ArrayList<orderedProducts> getOrderedProds(int orderID) throws SQLException {
         ArrayList<orderedProducts> toRet = new ArrayList<>();
-        String query = "select productID, quantity from orderIncludes where orderIncludes.orderID = orderID";
+        String query = "select productID, quantity from orderIncludes where orderIncludes.orderID = "+orderID;
         ResultSet rs = HelloApplication.retrieveData(query, 0);
         while(rs.next()){
             System.out.println(rs.getInt("productID")+" "+ rs.getInt("quantity"));

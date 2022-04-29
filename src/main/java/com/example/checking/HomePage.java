@@ -42,7 +42,7 @@ public class HomePage {
         searchIcon.setOnMouseClicked(e->{
             String input = searchBar.getText().strip();
             String query = "select * from products where products.productName = \'"+input+"\'";
-            ResultSet rs = HelloApplication.retrieveData(query, 2);
+            ResultSet rs = HelloApplication.retrieveData(query, 1);
             try{
 
                 searchResult.show(stage, rs);
@@ -99,6 +99,8 @@ public class HomePage {
         elect.setLayoutX(140);
         elect.setLayoutY(555);
 
+
+
         ImageView Furniture = new ImageView(furnitureImg);
         Furniture.setLayoutX(400);
         Furniture.setLayoutY(350);
@@ -152,6 +154,7 @@ public class HomePage {
             }
         });
     }
+
 
     public static void showProfile(Stage stage) throws SQLException {
         profilePage.show(stage);

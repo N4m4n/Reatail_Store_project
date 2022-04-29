@@ -194,6 +194,14 @@ public class orderConfirmation {
                     String query = "insert into orders (addressID, amount, modeOfPayment) values ("+ addID+", "+finalAmt+", \'"+mop+"\')";
                     System.out.println(query);
                     HelloApplication.sendData(query, 1);
+
+                    query = "insert into orderincludes select MAX(orderID), productID, quantity from place join cart using(customerID) where place.orderID = (select max(orderID) from place)";
+                    HelloApplication.sendData(query, 1);
+
+                    query = "delete from cart where customerID = "+HelloApplication.customerID;
+                    HelloApplication.sendData(query, 1);
+
+
                 } catch (SQLException ex) {
                     ex.printStackTrace();
                 }

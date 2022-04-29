@@ -14,6 +14,8 @@ import java.sql.*;
 public class HelloApplication extends Application {
 
     public static int customerID = -1;
+    public static String customerName = "";
+    public static String passWord = "";
 
     @Override
     public void start(Stage stage) throws IOException {
@@ -56,9 +58,12 @@ public class HelloApplication extends Application {
         registerC.setLayoutX(350);
         registerC.setLayoutY(450);
 
-        Button registerS = new Button("Supplier Sign up ");
+        Button registerS = new Button("Login Supplier");
         registerS.setLayoutX(500);
-        registerS.setLayoutY(450);
+        registerS.setLayoutY(100);
+        registerS.setOnAction(e->{
+            supplierLogin.show(stage);
+        });
 
         Button login = new Button("Log in");
         login.setLayoutX(400);
@@ -69,7 +74,10 @@ public class HelloApplication extends Application {
             signUpPageC(stage);
         });
 
+
         login.setOnAction(e->{
+            customerName = EmailPh.getText();
+            passWord = Pass.getText();
             String phoneoremail = EmailPh.getText();
             String pass = Pass.getText();
             String query = "select * from customers where (emailID = \'"+phoneoremail+"\') and accountPassword = \'"+pass+"\'";
@@ -184,7 +192,7 @@ public class HelloApplication extends Application {
             String query = "insert into customers (firstName, lastName, phoneNo, emailID, accountPassword) values (\""+fName+"\", \""+lName+"\", \""+phone+"\", \""+emailId+"\", \""+pass+"\")";
             System.out.println(query);
 
-            if(sendData(query, 1)){
+            if(sendData(query, 2)){
                 mainPage(stage);
             }
 
@@ -197,33 +205,115 @@ public class HelloApplication extends Application {
     }
 
     public static ResultSet retrieveData(String query, int level){
-        System.out.println(query);
-        try{
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/retailstore", "root", "ComeCode1608");
-            java.sql.Statement st;
-            st = (java.sql.Statement) conn.createStatement();
-            ResultSet rs = st.executeQuery(query);
+        System.out.println(query+ level);
+        if(level == 3){
+            try{
+                Class.forName("com.mysql.cj.jdbc.Driver");
+                Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/retailstore",supplierLogin.supplierEmail, supplierLogin.passWord);
+                java.sql.Statement st;
+                st = (java.sql.Statement) conn.createStatement();
+                ResultSet rs = st.executeQuery(query);
 
-            return rs;
+                return rs;
 
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            return null;
+            } catch (SQLException e) {
+                e.printStackTrace();
+                return null;
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+                return null;
+            }
+
+
+        } else if(level == 2){
+            try{
+                Class.forName("com.mysql.cj.jdbc.Driver");
+                Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/retailstore","root", "ComeCode1608");
+                java.sql.Statement st;
+                st = (java.sql.Statement) conn.createStatement();
+                ResultSet rs = st.executeQuery(query);
+
+                return rs;
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+                return null;
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+                return null;
+            }
+
+        }else{
+            try{
+                Class.forName("com.mysql.cj.jdbc.Driver");
+                Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/retailstore", HelloApplication.customerName, HelloApplication.passWord);
+                java.sql.Statement st;
+                st = (java.sql.Statement) conn.createStatement();
+                ResultSet rs = st.executeQuery(query);
+
+                return rs;
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+                return null;
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+                return null;
+            }
+
+
         }
-
     }
     public static boolean sendData(String query, int level){
-        if(level == 1){
+        if(level == 3){
+            try{
+                Class.forName("com.mysql.cj.jdbc.Driver");
+                System.out.println(query);
+                Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/retailstore", supplierLogin.supplierEmail, supplierLogin.passWord);
+                PreparedStatement pst = conn.prepareStatement(query);
+                pst.executeUpdate();
+
+                return true;
+
+            }catch(Exception e2){
+
+                showError("Something went wrong!","Could not register user\nError: "+e2.getMessage() );
+                e2.printStackTrace();
+                return false;
+
+            }
+
+
+
+        }
+        else if(level == 2){
+            try{
+                Class.forName("com.mysql.cj.jdbc.Driver");
+                System.out.println(query);
+                Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/retailstore", "root", "ComeCode1608");
+
+                PreparedStatement pst = conn.prepareStatement(query);
+                pst.executeUpdate();
+
+                return true;
+
+            }catch(Exception e2){
+
+                showError("Something went wrong!","Could not register user\nError: "+e2.getMessage() );
+                e2.printStackTrace();
+                return false;
+
+            }
+
+
+        }
+        else if(level == 1){
 
 
             try{
                 Class.forName("com.mysql.cj.jdbc.Driver");
                 System.out.println(query);
-                Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/retailstore", "root", "ComeCode1608");
+                Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/retailstore", HelloApplication.customerName, HelloApplication.passWord);
 
                 PreparedStatement pst = conn.prepareStatement(query);
                 pst.executeUpdate();
@@ -243,7 +333,7 @@ public class HelloApplication extends Application {
     public static ResultSet callFunction(String query, int level){
         try {
                 Class.forName("com.mysql.cj.jdbc.Driver");
-                Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/retailstore", "root", "ComeCode1608");
+                Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/retailstore",  HelloApplication.customerName, HelloApplication.passWord);
 
                 CallableStatement cstmt = conn.prepareCall(query);
 

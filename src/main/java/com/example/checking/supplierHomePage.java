@@ -1,31 +1,34 @@
 package com.example.checking;
+
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-public class allProductsPage {
+public class supplierHomePage {
 
-    public static void show(Stage stage, int category) throws SQLException {
+    public static void show(Stage stage) throws SQLException {
         Pane main = new Pane();
-        TableView categoryWiseProducts = getProductsTableCategory(category);
+
+        TableView categoryWiseProducts = getProductsTableCategory(getCategory());
         categoryWiseProducts.setLayoutY(100);
         categoryWiseProducts.setLayoutX(100);
         categoryWiseProducts.setPrefHeight(300);
         categoryWiseProducts.setPrefWidth(600);
-        Label Add = new Label("Add");
+        Label Add = new Label("Sell");
         Add.setLayoutX(200);
         Add.setLayoutY(450);
 
-        Button back = new Button("Back");
+        Button back = new Button("Logout");
         back.setLayoutX(20);
         back.setLayoutY(20);
         back.setOnAction(e->{
-            HomePage.show(stage);
+            supplierLogin.show(stage);
         });
 
         TextField quant = new TextField();
@@ -33,97 +36,28 @@ public class allProductsPage {
         quant.setLayoutX(240);
         quant.setPrefWidth(60);
 
-        Label items = new Label("selected items to the cart.");
+        Label items = new Label("selected items to the retail store for .");
         items.setLayoutY(450);
         items.setLayoutX(310);
 
+        TextField price = new TextField();
+        price.setLayoutY(450);
+        price.setLayoutX(500);
+        main.getChildren().add(price);
+
+
         Button addItems = new Button();
-        addItems.setText("Add to cart");
+        addItems.setText("Sell");
         addItems.setLayoutX(450);
-        addItems.setLayoutY(450);
-
-        Button checkout = new Button();
-        checkout.setText("Checkout");
-        checkout.setLayoutX(450);
-        checkout.setLayoutY(550);
-
-        TextArea feedback = new TextArea();
-        feedback.setLayoutY(500);
-        feedback.setLayoutX(45);
-        feedback.setPrefWidth(200);
-        feedback.setPrefHeight(80);
-        main.getChildren().add(feedback);
-
-        Button sendFeedback = new Button("Give feedback for selected");
-        sendFeedback.setLayoutX(45);
-        sendFeedback.setLayoutY(470);
-        sendFeedback.setOnAction(e->{
-            availableProducts curr = (availableProducts) categoryWiseProducts.getSelectionModel().getSelectedItem();
-            String feed = feedback.getText();
-            feed = feed.strip();
-            if(feed.length()> 0){
-                String query = "insert into feedback values ("+curr.getProductID()+", "+HelloApplication.customerID+", \'"+feed+"\')";
-                HelloApplication.sendData(query, 1);
-                HelloApplication.showError("Sent", "Thank you for providing your valuable feedback!");
-                feedback.setText("");
-
-            }
-
-        });
-        main.getChildren().add(sendFeedback);
-
-
-
-        TextArea complaint = new TextArea();
-        complaint.setLayoutY(500);
-        complaint.setLayoutX(550);
-        complaint.setPrefWidth(200);
-        complaint.setPrefHeight(80);
-        main.getChildren().add(complaint);
-
-        Button sendComplaint = new Button("File complaint");
-        sendComplaint.setLayoutX(550);
-        sendComplaint.setLayoutY(470);
-        sendComplaint.setOnAction(e->{
-            availableProducts curr = (availableProducts) categoryWiseProducts.getSelectionModel().getSelectedItem();
-            String feed = complaint.getText();
-            feed = feed.strip();
-            if(feed.length()> 0){
-                String query = "insert into complaints (productID, customerID, comments) values ("+curr.getProductID()+", "+HelloApplication.customerID+", \'"+feed+"\')";
-                HelloApplication.sendData(query, 1);
-                HelloApplication.showError("Sent", "You complaint will be handled by our employee soon.");
-                complaint.setText("");
-
-            }
-
-        });
-        main.getChildren().add(sendComplaint);
-
-
-
-
-
-
-
-
-
-
-
-
-
-        checkout.setOnAction(e->{
-            try {
-                profilePage.show(stage);
-            } catch (SQLException ex) {
-                ex.printStackTrace();
-            }
-        });
+        addItems.setLayoutY(490);
 
         addItems.setOnAction(e->{
             availableProducts curr = (availableProducts) categoryWiseProducts.getSelectionModel().getSelectedItem();
             int quantityToAdd = 0;
+            float sellingPrice = 0.0F;
             try{
                 quantityToAdd = Integer.valueOf(quant.getText());
+                sellingPrice = Float.valueOf(price.getText());
 
             }catch(Exception e2){
                 Dialog<String> dialog = new Dialog<String>();
@@ -139,19 +73,41 @@ public class allProductsPage {
                 dialog.showAndWait();
 
             }
-            if(curr.getQuantityAvailable() < quantityToAdd){
-                HelloApplication.showError("Insufficient", "You order more than we have");
+            if(quantityToAdd <0){
+                HelloApplication.showError("Insufficient", "Invalid entry");
             }else{
-                String query = "insert into cart values ("+HelloApplication.customerID+", "+curr.getProductID()+", "+quantityToAdd+")";
-                HelloApplication.sendData(query, 1);
+
+                String query = "insert into supplies(supplierID, productID, costPerProduct, quantity) values ("+supplierLogin.supplierID+", "+curr.getProductID()+", "+sellingPrice+", "+quantityToAdd+")";
+                HelloApplication.sendData(query, 3);
             }
 
-            System.out.println(curr.getDescription()+" "+quantityToAdd);
         });
 
-        main.getChildren().addAll(categoryWiseProducts, Add, quant, items, addItems, back, checkout);
+        main.getChildren().addAll(categoryWiseProducts, Add, quant, items, addItems, back);
         Scene productsScene = new Scene(main, 800, 600);
         stage.setScene(productsScene);
+    }
+
+    public static int getCategory() throws SQLException {
+        String query = "select category from supplierinfo where supplierID = "+supplierLogin.supplierID;
+        ResultSet rs = HelloApplication.retrieveData(query, 2);
+        if(rs.next()){
+            String category = rs.getString("category");
+            if(category.equals("Eatables")){
+                return 1;
+            }else if(category.equals("Apparels")){
+                return 2;
+            }else if(category.equals("Furniture")){
+                return 3;
+            }else if(category.equals("Electronics")){
+                return 4;
+            }
+        }else{
+            return -1;
+        }
+
+
+        return -1;
     }
 
     public static TableView getProductsTableCategory(int category) throws SQLException {
@@ -189,7 +145,7 @@ public class allProductsPage {
         quantityAvailable.setCellValueFactory(new PropertyValueFactory<>("quantityAvailable"));
 
 
-        productsTable.getColumns().addAll(productID, prodName, description, price, quantityAvailable);
+        productsTable.getColumns().addAll(productID, prodName, description);
 
 
 
@@ -215,7 +171,7 @@ public class allProductsPage {
 
     public static ArrayList<availableProducts> getListOfProducts(String category) throws SQLException {
         String query = "select * from products where category = \'"+category+"\'";
-        ResultSet rs = HelloApplication.retrieveData(query, 1);
+        ResultSet rs = HelloApplication.retrieveData(query, 3);
         ArrayList<availableProducts> toRet = new ArrayList<>();
         while (rs.next()) {
             availableProducts toAdd = new availableProducts(rs.getInt("productID"), rs.getString("productName"), rs.getFloat("price"), rs.getString("productDetails"), rs.getInt("quantityAvailable"));
