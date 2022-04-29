@@ -5,11 +5,16 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.Window;
+import org.w3c.dom.Text;
 
 import javax.xml.transform.Result;
 import java.io.IOException;
 import java.sql.*;
+import java.util.ArrayList;
 
 public class HelloApplication extends Application {
 
@@ -215,7 +220,26 @@ public class HelloApplication extends Application {
 
     public static ResultSet retrieveData(String query, int level){
         System.out.println(query+ level);
-        if(level == 3){
+        if (level == 4){
+            try{
+                Class.forName("com.mysql.cj.jdbc.Driver");
+                Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/retailstore",employeeLogin.employeeEmail, employeeLogin.passWord);
+                java.sql.Statement st;
+                st = (java.sql.Statement) conn.createStatement();
+                ResultSet rs = st.executeQuery(query);
+
+                return rs;
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+                return null;
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+                return null;
+            }
+
+        }
+        else if(level == 3){
             try{
                 Class.forName("com.mysql.cj.jdbc.Driver");
                 Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/retailstore",supplierLogin.supplierEmail, supplierLogin.passWord);
@@ -274,7 +298,29 @@ public class HelloApplication extends Application {
         }
     }
     public static boolean sendData(String query, int level){
-        if(level == 3){
+        if(level==4){
+
+            try{
+                Class.forName("com.mysql.cj.jdbc.Driver");
+                System.out.println(query);
+                Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/retailstore", employeeLogin.employeeEmail, employeeLogin.passWord);
+                PreparedStatement pst = conn.prepareStatement(query);
+                pst.executeUpdate();
+
+                return true;
+
+            }catch(Exception e2){
+
+                showError("Something went wrong!","Could not register user\nError: "+e2.getMessage() );
+                e2.printStackTrace();
+                return false;
+
+            }
+
+
+
+        }
+        else if(level == 3){
             try{
                 Class.forName("com.mysql.cj.jdbc.Driver");
                 System.out.println(query);
@@ -377,4 +423,20 @@ public class HelloApplication extends Application {
         connectToDB();
         launch();
     }
+    
+    public static void showPopup(Stage stage, ArrayList<String> texts){
+        final Stage dialog = new Stage();
+        dialog.initModality(Modality.APPLICATION_MODAL);
+
+        dialog.initOwner(stage);
+        VBox dialogVbox = new VBox();
+        for (int i = 0; i<texts.size(); i++){
+            dialogVbox.getChildren().addAll(new Label(texts.get(i)));
+        }
+
+        Scene dialogScene = new Scene(dialogVbox, 500, 500);
+        dialog.setScene(dialogScene);
+        dialog.show();
+    }
+    
 }
