@@ -12,7 +12,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class employeeHomePage {
-    public static void show(Stage stage){
+    public static void show(Stage stage) throws Exception{
         Pane main = new Pane();
 
         Button back = new Button("Back");
@@ -41,6 +41,115 @@ public class employeeHomePage {
         Button SupplierSearch = new Button("Search supplier by ID");
         SupplierSearch.setLayoutX(220);
         SupplierSearch.setLayoutY(90);
+
+        Button Complaints = new Button("GO TO COMPLAINTS SECTION");
+        Complaints.setLayoutX(600);
+        Complaints.setLayoutY(200);
+
+        Complaints.setOnAction(e->{
+            try {
+                complaintsPage.show(stage);
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        });
+
+        Button query1 = new Button("List all unused coupons");
+        query1.setLayoutX(200);
+        query1.setLayoutY(200);
+
+        query1.setOnAction(e->{
+            String query = "select couponID, minOrder, validTillDate, discount from coupons natural left outer join applies where orderID is null and validTillDate >= curdate()";
+            ResultSet rs = HelloApplication.retrieveData(query, 4);
+            ArrayList<String> arr = new ArrayList<>();
+            while(true){
+                try {
+                    if (!rs.next()) {
+                        break;
+                    }else{
+                        arr.add(rs.getString("couponID"));
+                    }
+
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+
+            }
+            HelloApplication.showPopup(stage, arr);
+
+        });
+
+        Button query2 = new Button("Coupons used atleast twice");
+        query2.setLayoutX(200);
+        query2.setLayoutY(230);
+        query2.setOnAction(e->{
+            String query = "select couponID from coupons where 2 <= (select count(couponID) from applies where coupons.couponID = applies.couponID)";
+            ResultSet rs = HelloApplication.retrieveData(query, 4);
+            ArrayList<String> arr = new ArrayList<>();
+            while(true){
+                try {
+                    if (!rs.next()) {
+                        break;
+                    }else{
+                        arr.add(rs.getString("couponID"));
+                    }
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+            }
+            HelloApplication.showPopup(stage, arr);
+        });
+
+        Button query4 = new Button("Average spending _ orderID");
+        query4.setLayoutX(200);
+        query4.setLayoutY(290);
+        query4.setOnAction(e->{
+            String query = "select orderID as OrderNo, avg(amount) as Average over (order by orderID rows unbounded preceding) as AvgSale from orders";
+            ResultSet rs = HelloApplication.retrieveData(query, 4);
+            ArrayList<String> arr = new ArrayList<>();
+            while(true){
+                try {
+                    if (!rs.next()) {
+                        break;
+                    }else{
+                        arr.add(rs.getString("orderNo")+" "+rs.getString("average"));
+                    }
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+
+            }
+            HelloApplication.showPopup(stage, arr);
+
+
+        });
+
+        Button query6 = new Button("Get category wise profit");
+        query6.setLayoutX(200);
+        query6.setLayoutY(350);
+        query6.setOnAction(e->{
+
+            String query = "with category_purchase (category, purchaseAmount) as (select category, sum(supplies.quantity*costPerProduct) from supplies natural join products group by products.category) select category, category_sold.sellingAmount - category_purchase.purchaseAmount as profit from (select category, sum(orderincludes.quantity*price) from orderincludes natural join products group by products.category) as category_sold(category, sellingAmount) natural join category_purchase";
+            ArrayList<String> arr = new ArrayList<>();
+            ResultSet rs = HelloApplication.retrieveData(query, 4);
+            while(true){
+                try {
+                    if (!rs.next()) {
+                        break;
+                    }else{
+                        arr.add(rs.getString("category")+" "+rs.getString("profit"));
+                    }
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+
+            }
+            HelloApplication.showPopup(stage, arr);
+
+        });
+
+
+        main.getChildren().addAll(query1, query2, query4, query6);
 
 
         CustomerSearch.setOnAction(e->{
@@ -83,7 +192,7 @@ public class employeeHomePage {
 
         });
 
-        main.getChildren().addAll(back, customerSearch, supplierSearch, SupplierSearch, CustomerSearch);
+        main.getChildren().addAll(back, customerSearch, supplierSearch, SupplierSearch, CustomerSearch, Complaints);
 
 
 

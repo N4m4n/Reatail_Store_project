@@ -61,6 +61,8 @@ public class employeeLogin {
                 }
             } catch (SQLException ex) {
                 ex.printStackTrace();
+            } catch (Exception ex) {
+                ex.printStackTrace();
             }
 
 
